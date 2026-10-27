@@ -1,0 +1,168 @@
+syntax = "proto3";
+
+package hospital;
+
+// Message for checking doctor availability
+message RequestAvailability {
+  string doctor_id = 1;
+  int32 lamport_clock = 2;
+}
+
+message ResponseAvailability {
+  bool available = 1;
+  string message = 2;
+  int32 lamport_clock = 3;
+}
+
+// Message for booking an appointment
+message RequestAppointment {
+  string patient_id = 1;
+  string doctor_id = 2;
+  string date = 3;
+  int32 lamport_clock = 4;
+}
+
+message ResponseAppointment {
+  bool success = 1;
+  string message = 2;
+  int32 lamport_clock = 3;
+}
+
+// Message for updating patient records
+message RequestUpdateRecord {
+  string patient_id = 1;
+  string diagnosis = 2;
+  int32 lamport_clock = 3;
+}
+
+message ResponseUpdateRecord {
+  bool success = 1;
+  string message = 2;
+  int32 lamport_clock = 3;
+}
+
+// Service definition
+service HospitalService {
+  rpc CheckAvailability (RequestAvailability) returns (ResponseAvailability);
+  rpc BookAppointment (RequestAppointment) returns (ResponseAppointment);
+  rpc UpdatePatientRecord (RequestUpdateRecord) returns (ResponseUpdateRecord);
+}
+
+// Peer-to-peer mutual exclusion service
+service MutexService {
+  rpc RequestAccess (AccessRequest) returns (AccessReply);
+}
+
+message AccessRequest {
+  int32 node_id = 1;
+  int32 timestamp = 2;
+}
+
+message AccessReply {
+  int32 node_id = 1;
+  int32 timestamp = 2;
+}
+
+// Experiment 5: Deadlock simulation & resolution
+service LockService {
+  rpc AcquireLock (LockRequest) returns (LockReply);
+  rpc ReleaseLock (LockRequest) returns (LockReply);
+}
+
+message LockRequest {
+  string resource_id = 1;
+  int32 holder_id = 2;
+  int32 timestamp = 3;
+}
+
+message LockReply {
+  bool granted = 1;
+  string message = 2;
+}
+
+// Experiment 6: Least Connections Load Balancing
+service HospitalWorkerService {
+  rpc HandleRequest (WorkRequest) returns (WorkReply);
+}
+
+message WorkRequest {
+  int32 request_id = 1;
+}
+
+message WorkReply {
+  int32 request_id = 1;
+  string handled_by = 2;
+  string status = 3;
+}
+
+// Experiment 7: Eventual Consistency via Gossip Replication & LWW
+service ReplicaService {
+  rpc SaveValue (ValueUpdate) returns (SaveAck);
+  rpc SyncUpdate (ValueUpdate) returns (SaveAck);
+  rpc GetValue (ValueQuery) returns (ValueState);
+}
+
+message ValueUpdate {
+  string key = 1;
+  string content = 2;
+  int32 lamport_timestamp = 3;
+  string origin_replica = 4;
+}
+
+message SaveAck {
+  bool accepted = 1;
+  string replica = 2;
+  int32 lamport_timestamp = 3;
+}
+
+message ValueQuery {
+  string key = 1;
+}
+
+message ValueState {
+  string key = 1;
+  string content = 2;
+  int32 lamport_timestamp = 3;
+  string origin_replica = 4;
+}
+
+// Experiment 8: Fault-Tolerant Cache Service
+service PatientRecordService {
+  rpc GetPatientRecord (PatientQuery) returns (PatientRecordReply);
+}
+
+message PatientQuery {
+  int32 patient_id = 1;
+}
+
+message PatientRecordReply {
+  int32 patient_id = 1;
+  string name = 2;
+  string diagnosis = 3;
+  string ward = 4;
+}
+// Experiment 9: Raft-based Leader Election & Failover
+service RaftService {
+  rpc RequestVote (VoteRequest) returns (VoteReply);
+  rpc AppendEntries (HeartbeatRequest) returns (HeartbeatReply);
+}
+
+message VoteRequest {
+  int32 term = 1;
+  string candidate_id = 2;
+}
+
+message VoteReply {
+  int32 term = 1;
+  bool vote_granted = 2;
+}
+
+message HeartbeatRequest {
+  int32 term = 1;
+  string leader_id = 2;
+}
+
+message HeartbeatReply {
+  int32 term = 1;
+  bool success = 2;
+}

@@ -352,3 +352,8 @@ MigrationBackup/
 # virtualenv
 .venv/
 venv/
+
+# Local databases and instance folders
+*.db
+instance/
+dist/

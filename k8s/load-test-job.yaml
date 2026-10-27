@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: load-test
+          image: hospital-backend:v7
+          imagePullPolicy: IfNotPresent
+          command: ["python", "load_test.py"]
+          env:
+            - name: TARGET_ADDR
+              value: "raft-node-c:60403"

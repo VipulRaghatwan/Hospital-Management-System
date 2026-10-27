@@ -19,3 +19,18 @@ ENV NAME Hospital-Management-System
 
 # Run app.py when the container launches
 CMD ["python", "app.py"]
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Enable unbuffered logs so prints show up immediately in kubectl logs
+ENV PYTHONUNBUFFERED=1
+ENV RUN_ENV=k8s
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "raft_node.py", "A"]

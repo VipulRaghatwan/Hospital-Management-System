@@ -2,3 +2,7 @@ Flask
 SQLAlchemy
 pymysql
 pydantic
+grpcio
+grpcio-tools
+protobuf
+redis
